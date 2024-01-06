@@ -64,7 +64,7 @@
 (defmacro heap--when-generators (then)
   "Evaluate THEN if `generator' library is available."
   (declare (debug t))
-  (if (require 'generator nil 'noerror) then))
+  (when (require 'generator nil 'noerror) then))
 
 
 ;;; ================================================================
