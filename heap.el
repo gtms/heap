@@ -70,15 +70,15 @@
 ;;; ================================================================
 ;;;        Internal functions for use in the heap package
 
-(defstruct (heap-
-	    :named
-	    (:constructor nil)
-	    (:constructor heap--create
-			  (cmpfun &optional (size 10) (resize 2)
-			   &aux
-			   (vect (make-vector size nil))
-			   (count 0)))
-	    (:copier nil))
+(cl-defstruct (heap-
+               :named
+               (:constructor nil)
+               (:constructor heap--create
+                             (cmpfun &optional (size 10) (resize 2)
+                                     &aux
+                                     (vect (make-vector size nil))
+                                     (count 0)))
+               (:copier nil))
   vect cmpfun count size resize)
 
 
