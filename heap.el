@@ -117,15 +117,19 @@ comparison function."
             (aref v j) (aref v i)))
 
 
-(defun heap--sift-up (heap n)   ; INTERNAL USE ONLY
-  ;; Sift-up starting from element N of vector belonging to HEAP.
-  (let* ((i n) (j nil) (vect (heap--vect heap)) (v (aref vect n)))
-    ;; Keep moving element up until it reaches top or is smaller/bigger
-    ;; than its parent.
+(defun heap--sift-up (heap n)
+  "Sift instance with index N in HEAP upwards.
+
+Proceed until it reaches its order in the HEAP as determined by
+the HEAP comparison function, or its top."
+  (let* ((v (heap--vect heap))
+         (f (heap--cmpfun heap))
+         (i n)
+         (j)
+         (e (aref v i)))
     (while (and (> i 0)
-		(funcall (heap--cmpfun heap) v
-			 (aref vect (setq j (/ (1- i) 3)))))
-      (heap--vswap vect i j)
+		(funcall f e (aref v (setq j (/ (1- i) 3)))))
+      (heap--vswap v i j)
       (setq i j))))
 
 
