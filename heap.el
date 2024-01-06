@@ -99,6 +99,14 @@
 	(if (>= (+ 3 k) count) j
 	  (if (funcall cmpfun (aref vect j) (aref vect (+ 3 k)))
 	      j (+ 3 k)))))))
+(defsubst heap--isort (v i j f)
+  "Return first index from I or J in vector V.
+
+Indexes I and J are ordered by calling sorting function F on
+their respective elements in V."
+  (if (funcall f (aref v i) (aref v j)) i j))
+
+
 
 
 (defsubst heap--vswap (v i j)
