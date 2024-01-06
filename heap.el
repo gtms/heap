@@ -172,7 +172,9 @@ defaulting to 2."
 
 
 ;;;###autoload
-(defalias 'heap-create 'make-heap)
+(defalias 'heap-create #'make-heap)
+(defalias 'heap-pop #'heap-delete-root)
+(defalias 'heap-push #'heap-add)
 
 
 (defun heap-copy (heap)
