@@ -82,23 +82,6 @@
   vect cmpfun count size resize)
 
 
-(defun heap--child (heap i)    ; INTERNAL USE ONLY
-  ;; Compare the 3 children of element I, and return element reference
-  ;; of the smallest/largest (depending on whethen it's a min- or
-  ;; max-heap).
-  (let* ((vect (heap--vect heap))
-	 (cmpfun (heap--cmpfun heap))
-	 (count (heap--count heap))
-	 (j nil) (k (* 3 i)))
-    ;; Lots of if's in case I has less than three children.
-    (if (>= (1+ k) count) nil
-      (if (>= (+ 2 k) count) (1+ k)
-	(setq j (if (funcall cmpfun (aref vect (1+ k))
-			     (aref vect (+ 2 k)))
-		    (1+ k) (+ 2 k)))
-	(if (>= (+ 3 k) count) j
-	  (if (funcall cmpfun (aref vect j) (aref vect (+ 3 k)))
-	      j (+ 3 k)))))))
 (defsubst heap--isort (v i j f)
   "Return first index from I or J in vector V.
 
@@ -107,6 +90,25 @@ their respective elements in V."
   (if (funcall f (aref v i) (aref v j)) i j))
 
 
+(defun heap--child (heap i)
+  "Return the index of the first of the 3 children of element I in HEAP, if any.
+
+The children, should they exist, are ordered using the HEAP
+comparison function."
+  (let ((v (heap--vect heap))
+        (f (heap--cmpfun heap))
+        (c (heap--count heap))
+        (j (* 3 i)))
+    (let ((first (1+ j)))
+      (unless (>= first c)
+        (let ((second (+ 2 j)))
+          (if (>= second c)
+              first
+            (let ((best (heap--isort v first second f))
+                  (third (+ 3 j)))
+              (if (>= third c)
+                  best
+                (heap--isort v best third f)))))))))
 
 
 (defsubst heap--vswap (v i j)
