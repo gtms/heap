@@ -101,11 +101,10 @@
 	      j (+ 3 k)))))))
 
 
-(defsubst heap--vswap (vect i j)   ; INTERNAL USE ONLY
-  ;; Swap elements I and J of vector VECT.
-  (let ((tmp (aref vect i)))
-    (aset vect i (aref vect j))
-    (aset vect j tmp) vect))
+(defsubst heap--vswap (v i j)
+  "Swap elements I and J in vector V."
+  (cl-psetf (aref v i) (aref v j)
+            (aref v j) (aref v i)))
 
 
 (defun heap--sift-up (heap n)   ; INTERNAL USE ONLY
