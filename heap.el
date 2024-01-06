@@ -155,25 +155,20 @@ the HEAP comparison function, or its bottom."
 ;;;          The public functions which operate on heaps.
 
 ;;;###autoload
-(defun make-heap
-  (compare-function &optional initial-size resize-factor)
+(defun make-heap (compare-function &optional initial-size resize-factor)
   "Create an empty heap with comparison function COMPARE-FUNCTION.
 
-COMPARE-FUNCTION takes two arguments, A and B, and returns
-non-nil or nil. To implement a max-heap, it should return non-nil
-if A is greater than B. To implemenet a min-heap, it should
-return non-nil if A is less than B.
+COMPARE-FUNCTION is called with two elements of the heap, and
+should return non-nil if the first element should sort before the
+second, nil otherwise.
 
 Optional argument INITIAL-SIZE sets the initial size of the heap,
-defaulting to 10. Optional argument RESIZE-FACTOR sets the factor
+defaulting to 10.  Optional argument RESIZE-FACTOR sets the factor
 by which the heap's size is increased if it runs out of space,
 defaulting to 2."
-  ;; sadly, passing null values over-rides the defaults in the defstruct
-  ;; `heap--create', so we have to explicitly set the defaults again
-  ;; here
-  (or initial-size (setq initial-size 10))
-  (or resize-factor (setq resize-factor 2))
-  (heap--create compare-function initial-size resize-factor))
+  (let ((initial-size (or initial-size 10))
+        (resize-factor (or resize-factor 2)))
+    (heap--create compare-function initial-size resize-factor)))
 
 
 ;;;###autoload
