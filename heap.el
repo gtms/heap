@@ -240,33 +240,23 @@ defaulting to 2."
 
 
 (defun heap-modify (heap match-function data)
-  "Replace the first heap entry identified by MATCH-FUNCTION
-with DATA, if a match exists. Return t if there was a match, nil
-otherwise.
+  "Replace the first element matched by MATCH-FUNCTION in heap HEAP with DATA.
 
-The function MATCH-FUNCTION should take one argument of the type
-stored in the heap, and return non-nil if it should be modified,
-nil otherwise.
+The function MATCH-FUNCTION is a predicate called with an element
+of HEAP as its single argument, and returns non-nil if that
+element should be modified, nil otherwise.  Only the first
+matched occurrence is modified.
 
-Note that only the match highest up the heap is modified."
-  (let ((vect (heap--vect heap))
-	(count (heap--count heap))
-	(i 0))
-    ;; search vector for the first match
-    (while (and (< i count)
-		(not (funcall match-function (aref vect i))))
-      (setq i (1+ i)))
-    ;; if a match was found, modify it
-    (if (< i count)
-	(let ((olddata (aref vect i)))
-	  (aset vect i data)
-	  ;; if the new data is greater than old data, sift-up,
-	  ;; otherwise sift-down
-	  (if (funcall (heap--cmpfun heap) data olddata)
-	      (heap--sift-up heap i)
-	    (heap--sift-down heap i))
-	  t)  ; return t if the match was successfully modified
-      nil)))  ; return nil if no match was found
+Return t if there was a match, nil otherwise."
+  (let* ((v (heap--vect heap))
+         (i (seq-position v (seq-find match-function v))))
+    (unless (not i)
+      (let ((olddata (aref v i)))
+        (aset v i data)
+        (if (funcall (heap--cmpfun heap) data olddata)
+            (heap--sift-up heap i)
+          (heap--sift-down heap i)))
+      t)))
 
 
 (defun heap-build (compare-function vec &optional resize-factor)
