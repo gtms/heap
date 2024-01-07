@@ -187,9 +187,9 @@ defaulting to 2."
     newheap))
 
 
-(defun heap-empty (heap)
-  "Return t if the heap is empty, nil otherwise."
-  (= 0 (heap--count heap)))
+(defun heap-empty-p (heap)
+  "Return t if heap HEAP is empty, nil otherwise."
+  (zerop (heap--count heap)))
 
 
 (defun heap-size (heap)
@@ -337,7 +337,7 @@ iterator is not very efficient, taking O(n) time for a heap of
 size n. Each call to `iter-next' on the other hand *is*
 efficient, taking O(log n) time.\)"
    (let ((heap (heap-copy heap)))
-     (while (not (heap-empty heap))
+     (while (not (heap-empty-p heap))
        (iter-yield (heap-delete-root heap))))))
 
 
