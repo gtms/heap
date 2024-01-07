@@ -178,12 +178,13 @@ defaulting to 2."
 
 
 (defun heap-copy (heap)
- "Return a copy of heap HEAP."
- (let ((newheap (heap--create (heap--cmpfun heap) (heap--size heap)
-			      (heap--resize heap))))
-   (setf (heap--vect newheap) (vconcat (heap--vect heap))
-	 (heap--count newheap) (heap--count heap))
-   newheap))
+  "Return a copy of heap HEAP."
+  (let ((newheap (heap--create (heap--cmpfun heap)
+                               (heap--size heap)
+                               (heap--resize heap))))
+    (setf (heap--vect newheap) (vconcat (heap--vect heap))
+          (heap--count newheap) (heap--count heap))
+    newheap))
 
 
 (defun heap-empty (heap)
