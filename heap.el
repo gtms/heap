@@ -73,10 +73,10 @@
 (cl-defstruct (hippo (:conc-name hippo--)
                      (:constructor nil)
                      (:copier nil)
-                     (:constructor hippo--create
                                    (cmpfun &optional
                                            (initial-size 10)
                                            (resize-factor 2)))
+                     (:constructor hippo--new
                      :named)
   (vect (make-vector initial-size nil))
   (cmpfun nil)
@@ -168,8 +168,8 @@ the HEAP comparison function, or its bottom."
 ;;;          The public functions which operate on heaps.
 
 ;;;###autoload
-(defalias 'hippo-create #'hippo--create
-  "Create an empty heap with comparison function COMPARE-FUNCTION.
+(defalias 'hippo-new #'hippo--new
+  "Create an empty heap with comparison function COMPARISON-FUNCTION.
 
 COMPARE-FUNCTION is called with two elements of the heap, and
 should return non-nil if the first element should sort before the
@@ -186,10 +186,10 @@ space, defaulting to 2.")
 
 (defun hippo-copy (heap)
   "Return a copy of heap HEAP."
-  (let ((newheap (hippo--create (hippo--cmpfun heap)
                                 (hippo--initial-size heap)
                                 (hippo--resize-factor heap))))
     (setf (hippo--vect newheap) (vconcat (hippo--vect heap))
+  (let ((newheap (hippo--new (hippo--comparison-function heap)
           (hippo--count newheap) (hippo--count heap))
     newheap))
 
@@ -276,9 +276,9 @@ second, nil otherwise.
 Optional argument RESIZE-FACTOR sets the factor by which the
 heap's size is increased if it runs out of space, defaulting to
 2."
-  (let ((heap (hippo--create
                compare-function
                (length vec)
+  (let ((heap (hippo--new
                (or resize-factor 2))))
     (setf (hippo--vect heap) (copy-sequence vec)
           (hippo--count heap) (length vec))
