@@ -226,20 +226,17 @@ defaulting to 2."
 
 
 (defun heap-delete-root (heap)
-  "Return the root of the heap and delete it from the heap."
-  (let ((vect (heap--vect heap))
-	root count)
-    ;; deal with empty heaps and heaps with just one element
-    (if (= 0 (heap--count heap)) nil
-      (setq root (aref vect 0)
-	    count (decf (heap--count heap)))
-      (if (= 0 count)
-	  (setf (heap--vect heap) (make-vector 10 nil))
-	;; delete root, swap last element to top, and sift-down from top
-	(aset vect 0 (aref vect count))
-	(aset vect count nil)
-	(heap--sift-down heap 0))
-      root)))
+  "Return the root of heap HEAP and remove it from HEAP."
+  (let ((v (heap--vect heap)))
+    (unless (zerop (heap--count heap))
+      (let ((root (aref v 0))
+            (count (cl-decf (heap--count heap))))
+        (if (zerop count)
+	    (setf (heap--vect heap) (make-vector (heap--size heap) nil))
+	  (aset v 0 (aref v count))
+	  (aset v count nil)
+	  (heap--sift-down heap 0))
+        root))))
 
 
 (defun heap-modify (heap match-function data)
