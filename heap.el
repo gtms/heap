@@ -290,17 +290,16 @@ heap's size is increased if it runs out of space, defaulting to
 
 
 (defun heap-merge (heap &rest heaps)
-  "Merge HEAP with remaining HEAPS.
+  "Merge heap HEAP with remaining HEAPS.
 
-The merged heap takes the comparison function and resize-fector
-of the first HEAP argument.
+The newly merged heap takes the comparison function and
+resize-factor of heap HEAP.
 
-\(Note that in this heap implementation, the merge operation is
-not very efficient, taking O(n) time for combined heap size n\)."
-  (setq heaps (mapcar #'heap--vect heaps))
-  (heap-build (heap--cmpfun heap)
-	      (apply #'vconcat (heap--vect heap) heaps)
-	      (heap--resize heap)))
+Note that this operation requires O(n) time to merge n heaps."
+  (let ((vv (mapcar #'heap--vect heaps)))
+    (heap-build (heap--cmpfun heap)
+                (apply #'vconcat (heap--vect heap) vv)
+                (heap--resize heap))))
 
 
 (defun heap-clear (heap)
