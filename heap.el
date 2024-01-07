@@ -203,24 +203,20 @@ defaulting to 2."
 
 
 (defun heap-add (heap data)
-  "Add DATA to the heap, and return DATA."
-  ;; Add data to bottom of heap and sift-up from bottom.
+  "Add DATA to heap HEAP, and return DATA."
   (let ((count (heap--count heap))
 	(size (heap--size heap))
 	(vect (heap--vect heap)))
-    ;; if there's no space left, grow the heap
     (if (< count size)
 	(aset vect count data)
       (setf (heap--vect heap)
-	    (vconcat (heap--vect heap) (vector data)
-		     (make-vector
-		      (1- (ceiling (* size (1- (heap--resize heap)))))
-		      nil))
-	    (heap--size heap)
-	    (ceiling (* size (heap--resize heap)))))
-    (setq count (setf (heap--count heap) (1+ (heap--count heap))))
-    (heap--sift-up heap (1- count)))
-  ;; return inserted data
+            (vconcat (heap--vect heap) (vector data)
+                     (make-vector
+                      (1- (* size (1- (heap--resize heap))))
+                      nil))
+            (heap--size heap) (* size (heap--resize heap))))
+    (let ((count (setf (heap--count heap) (1+ (heap--count heap)))))
+      (heap--sift-up heap (1- count))))
   data)
 
 
