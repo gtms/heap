@@ -270,27 +270,22 @@ Return t if there was a match, nil otherwise."
 
 
 (defun heap-build (compare-function vec &optional resize-factor)
-  "Build a heap from vector VEC with COMPARE-FUNCTION
-as the comparison function.
+  "Create a heap from vector VEC with comparison function COMPARE-FUNCTION.
 
-Note that VEC is modified, and becomes part of the heap data
-structure. If you don't want this, copy the vector first and pass
-the copy in VEC.
+COMPARE-FUNCTION is called with two elements of the heap, and
+should return non-nil if the first element should sort before the
+second, nil otherwise.
 
-COMPARE-FUNCTION takes two arguments, A and B, and returns
-non-nil or nil. To implement a max-heap, it should return non-nil
-if A is greater than B. To implemenet a min-heap, it should
-return non-nil if A is less than B.
-
-RESIZE-FACTOR sets the factor by which the heap's size is
-increased if it runs out of space, defaulting to 2."
-  (or resize-factor (setq resize-factor 2))
-  (let ((heap (heap--create compare-function (length vec) resize-factor))
-	(i (ceiling
-	    (1- (expt 3 (ceiling (1- (log (1+ (* 2 (length vec))) 3))))) 2)))
-    (setf (heap--vect heap) vec
-	  (heap--count heap) (length vec))
-    (while (>= (decf i) 0) (heap--sift-down heap i))
+Optional argument RESIZE-FACTOR sets the factor by which the
+heap's size is increased if it runs out of space, defaulting to
+2."
+  (let ((heap (heap--create
+               compare-function
+               (length vec)
+               (or resize-factor 2))))
+    (setf (heap--vect heap) (copy-sequence vec)
+          (heap--count heap) (length vec))
+    (heap--heapify heap)
     heap))
 
 
