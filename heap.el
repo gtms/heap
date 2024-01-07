@@ -168,7 +168,7 @@ the HEAP comparison function, or its bottom."
 ;;;          The public functions which operate on heaps.
 
 ;;;###autoload
-(defun make-heap (compare-function &optional initial-size resize-factor)
+(defalias 'hippo-create #'hippo--create
   "Create an empty heap with comparison function COMPARE-FUNCTION.
 
 COMPARE-FUNCTION is called with two elements of the heap, and
@@ -176,16 +176,10 @@ should return non-nil if the first element should sort before the
 second, nil otherwise.
 
 Optional argument INITIAL-SIZE sets the initial size of the heap,
-defaulting to 10.  Optional argument RESIZE-FACTOR sets the factor
-by which the heap's size is increased if it runs out of space,
-defaulting to 2."
-  (let ((initial-size (or initial-size 10))
-        (resize-factor (or resize-factor 2)))
-    (hippo--create compare-function initial-size resize-factor)))
+defaulting to 10.  Optional argument RESIZE-FACTOR sets the
+factor by which the heap's size is increased if it runs out of
+space, defaulting to 2.")
 
-
-;;;###autoload
-(defalias 'hippo-create #'make-heap)
 (defalias 'hippo-pop #'hippo-delete-root)
 (defalias 'hippo-push #'hippo-add)
 
