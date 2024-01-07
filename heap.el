@@ -221,8 +221,8 @@ defaulting to 2."
 
 
 (defun heap-root (heap)
-  "Return the root of the heap, without removing it"
-  (if (= (heap--count heap) 0) nil (aref (heap--vect heap) 0)))
+  "Return the root of heap HEAP, without removing it."
+  (if (zerop (heap--count heap)) nil (aref (heap--vect heap) 0)))
 
 
 (defun heap-delete-root (heap)
