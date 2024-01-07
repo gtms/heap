@@ -193,7 +193,7 @@ defaulting to 2."
 
 
 (defun heap-size (heap)
-  "Return the number of entries in the heap."
+  "Return the number of entries in heap HEAP."
   (heap--count heap))
 
 
