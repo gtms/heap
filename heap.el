@@ -319,10 +319,10 @@ Return number of entries removed."
 Calling `iter-next' on this object will retrieve the next element
 from the heap. The heap itself is not modified.
 
-\(Note that in this heap implementation, constructing a heap
-iterator is not very efficient, taking O(n) time for a heap of
-size n. Each call to `iter-next' on the other hand *is*
-efficient, taking O(log n) time.\)"
+Note that constructing a heap iterator is an inefficient
+operation that takes O(n) time for a heap of size n.  Calls to
+`iter-next' are comparatively efficient, taking O(log n) time
+each."
    (let ((heap (heap-copy heap)))
      (while (not (heap-empty-p heap))
        (iter-yield (heap-delete-root heap))))))
