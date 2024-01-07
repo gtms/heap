@@ -150,6 +150,16 @@ the HEAP comparison function, or its bottom."
             j (heap--child heap i)))))
 
 
+(defun heap--heapify (heap)
+  "Heapify heap HEAP."
+  (let* ((c (heap--count heap))
+         (i (ceiling
+             (1- (expt 3 (ceiling (1- (log (1+ (* 2 c)) 3))))) 2)))
+    (cl-loop for i downfrom i to 0 do
+             (heap--sift-down heap i))
+    heap))
+
+
 
 ;;; ================================================================
 ;;;          The public functions which operate on heaps.
