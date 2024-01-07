@@ -303,12 +303,12 @@ Note that this operation requires O(n) time to merge n heaps."
 
 
 (defun heap-clear (heap)
-  "Remove all entries from HEAP.
+  "Remove all entries from heap HEAP.
 
 Return number of entries removed."
   (prog1
       (heap--count heap)
-    (setf (heap--vect heap) (make-vector (length (heap--vect heap)) nil)
+    (setf (heap--vect heap) (make-vector (heap--size heap) nil)
           (heap--count heap) 0)))
 
 
