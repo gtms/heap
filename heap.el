@@ -181,8 +181,6 @@ factor by which the heap's size is increased if it runs out of
 space, defaulting to 2.")
 
 (defalias 'hippo-pop #'hippo-delete-root)
-(defalias 'hippo-push #'hippo-add)
-
 
 (defun hippo-copy (heap)
   "Return a copy of heap HEAP."
@@ -209,7 +207,7 @@ space, defaulting to 2.")
   (hippo--cmpfun heap))
 
 
-(defun hippo-add (heap data)
+(defun hippo-push (heap data)
   "Add DATA to heap HEAP, and return DATA."
   (let ((count (hippo--count heap))
 	(size (hippo--initial-size heap))
