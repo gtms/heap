@@ -49,12 +49,12 @@
 ;; implementation based on binary trees might be more suitable, but is not
 ;; currently implemented in this package.)
 ;;
-;; You create a heap using `make-heap', add elements to it using `heap-add',
-;; delete and return the root of the heap using `heap-delete-root', and modify
-;; an element of the heap using `heap-modify'.  A number of other heap
-;; convenience functions are also provided, all with the prefix `heap-'.
-;; Functions with prefix `heap--' are for internal use only, and should never be
-;; used outside this package.
+;; You create an empty heap using `heap-new', add elements to it using
+;; `heap-push', extract the root of the heap using `heap-pop', and update an
+;; element of the heap using `heap-modify'.  `heap-from' lets you turn a
+;; sortable vector into a heap.  A number of other heap convenience functions
+;; are also provided, all with the prefix `heap-'.  Functions with prefix
+;; `heap--' are for internal use only.
 
 
 ;;; Code:
