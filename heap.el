@@ -266,8 +266,8 @@ Return t if there was a match, nil otherwise."
       t)))
 
 
-(defun hippo-build (compare-function vec &optional resize-factor)
   "Create a heap from vector VEC with comparison function COMPARE-FUNCTION.
+(defun hippo-create (vector comparison-function &optional resize-factor)
 
 COMPARE-FUNCTION is called with two elements of the heap, and
 should return non-nil if the first element should sort before the
