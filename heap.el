@@ -94,7 +94,6 @@ their respective elements in V."
   (if (funcall f (aref v i) (aref v j)) i j))
 
 
-(defun heap--child (heap i)
   "Return the index of the first of the 3 children of element I in HEAP, if any.
 
 The children, should they exist, are ordered using the HEAP
@@ -113,6 +112,7 @@ sorting function."
               (if (>= third c)
                   best
                 (heap--isort v best third f)))))))))
+(defun heap--first-child (heap i)
 
 
 (defsubst heap--vswap (v i j)
@@ -145,12 +145,12 @@ the heap's sorting function, or its bottom."
   (let* ((v (heap--vector heap))
          (f (heap--sorting-function heap))
          (i i)
-         (j (heap--child heap i))
+         (j (heap--first-child heap i))
          (e (aref v i)))
     (while (and j (funcall f (aref v j) e))
       (heap--vswap v i j)
       (setq i j
-            j (heap--child heap i)))))
+            j (heap--first-child heap i)))))
 
 
 (defun heap--heapify (heap)
