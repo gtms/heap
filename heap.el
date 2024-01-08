@@ -122,10 +122,10 @@ sorting function."
 
 
 (defun heap--sift-up (heap i)
-  "Sift instance with index I in HEAP upwards.
+  "Sift instance with index I in heap HEAP upwards.
 
-Proceed until it reaches its order in the HEAP as determined by
-the HEAP sorting function, or its top."
+Proceed until it reaches its order in the heap as determined by
+the heap's sorting function, or its top."
   (let* ((v (heap--vector heap))
          (f (heap--sorting-function heap))
          (i i)
@@ -138,10 +138,10 @@ the HEAP sorting function, or its top."
 
 
 (defun heap--sift-down (heap i)
-  "Sift instance with index I in the HEAP downwards.
+  "Sift instance with index I in heap HEAP downwards.
 
-Proceed until it reaches its order in the HEAP as determined by
-the HEAP sorting function, or its bottom."
+Proceed until it reaches its order in the heap as determined by
+the heap's sorting function, or its bottom."
   (let* ((v (heap--vector heap))
          (f (heap--sorting-function heap))
          (i i)
