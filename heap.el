@@ -266,7 +266,7 @@ Return t if a match is found, nil otherwise."
 
 
 ;;;###autoload
-(defun heap-create (vector sorting-function &optional resize-factor)
+(defun heap-from (vector sorting-function &optional resize-factor)
   "Create a heap from vector VECTOR with sorting function SORTING-FUNCTION.
 
 SORTING-FUNCTION is called with two elements of the heap, and
@@ -294,7 +294,7 @@ resize-factor of heap HEAP.
 
 Note that this operation requires O(n) time to merge n heaps."
   (let ((vv (mapcar #'heap--vector heaps)))
-    (heap-create (heap--sorting-function heap)
+    (heap-from (heap--sorting-function heap)
                  (apply #'vconcat (heap--vector heap) vv)
                  (heap--resize-factor heap))))
 
