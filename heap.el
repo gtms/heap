@@ -196,7 +196,7 @@ space, defaulting to 2.")
   (zerop (hippo--count heap)))
 
 
-(defun hippo-size (heap)
+(defun hippo-count (heap)
   "Return the number of entries in heap HEAP."
   (hippo--count heap))
 
