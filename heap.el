@@ -121,14 +121,14 @@ comparison function."
             (aref v j) (aref v i)))
 
 
-(defun heap--sift-up (heap n)
-  "Sift instance with index N in HEAP upwards.
+(defun heap--sift-up (heap i)
+  "Sift instance with index I in HEAP upwards.
 
 Proceed until it reaches its order in the HEAP as determined by
 the HEAP comparison function, or its top."
   (let* ((v (heap--vector heap))
          (f (heap--comparison-function heap))
-         (i n)
+         (i i)
          (j)
          (e (aref v i)))
     (while (and (> i 0)
@@ -137,14 +137,14 @@ the HEAP comparison function, or its top."
       (setq i j))))
 
 
-(defun heap--sift-down (heap n)
-  "Sift instance with index N in the HEAP downwards.
+(defun heap--sift-down (heap i)
+  "Sift instance with index I in the HEAP downwards.
 
 Proceed until it reaches its order in the HEAP as determined by
 the HEAP comparison function, or its bottom."
   (let* ((v (heap--vector heap))
 	 (f (heap--comparison-function heap))
-	 (i n)
+	 (i i)
          (j (heap--child heap i))
 	 (e (aref v i)))
     (while (and j (funcall f (aref v j) e))
