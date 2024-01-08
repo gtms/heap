@@ -76,13 +76,13 @@
                     (:constructor heap--new
                                   (comparison-function
                                    &optional
-                                   (initial-size 10)
+                                   (allocated-size 10)
                                    (resize-factor 2)))
                     :named)
-  (vector (make-vector initial-size nil))
+  (vector (make-vector allocated-size nil))
   comparison-function
   (count 0)
-  (initial-size 10)
+  (allocated-size 10)
   (resize-factor 2))
 
 
@@ -175,8 +175,8 @@ COMPARISON-FUNCTION is called with two elements of the heap, and
 should return non-nil if the first element should sort before the
 second, nil otherwise.
 
-Optional argument INITIAL-SIZE sets the initial size of the heap,
-defaulting to 10.  Optional argument RESIZE-FACTOR sets the
+Optional argument ALLOCATED-SIZE sets the initial size of the
+heap, defaulting to 10.  Optional argument RESIZE-FACTOR sets the
 factor by which the heap's size is increased if it runs out of
 space, defaulting to 2.")
 
@@ -184,7 +184,7 @@ space, defaulting to 2.")
 (defun heap-copy (heap)
   "Return a copy of heap HEAP."
   (let ((newheap (heap--new (heap--comparison-function heap)
-                            (heap--initial-size heap)
+                            (heap--allocated-size heap)
                             (heap--resize-factor heap))))
     (setf (heap--vector newheap) (vconcat (heap--vector heap))
           (heap--count newheap) (heap--count heap))
@@ -209,7 +209,7 @@ space, defaulting to 2.")
 (defun heap-push (heap data)
   "Add DATA to heap HEAP, and return DATA."
   (let ((count (heap--count heap))
-        (size (heap--initial-size heap))
+        (size (heap--allocated-size heap))
         (v (heap--vector heap)))
     (if (< count size)
         (aset v count data)
@@ -218,7 +218,8 @@ space, defaulting to 2.")
                      (make-vector
                       (1- (* size (1- (heap--resize-factor heap))))
                       nil))
-            (heap--initial-size heap) (* size (heap--resize-factor heap))))
+            (heap--allocated-size heap)
+            (* size (heap--resize-factor heap))))
     (let ((count (setf (heap--count heap) (1+ (heap--count heap)))))
       (heap--sift-up heap (1- count))))
   data)
@@ -237,7 +238,7 @@ space, defaulting to 2.")
            (count (cl-decf (heap--count heap))))
       (if (zerop count)
           (setf (heap--vector heap)
-                (make-vector (heap--initial-size heap) nil))
+                (make-vector (heap--allocated-size heap) nil))
         (aset v 0 (aref v count))
         (aset v count nil)
         (heap--sift-down heap 0))
@@ -304,7 +305,8 @@ Note that this operation requires O(n) time to merge n heaps."
 Return the number of entries removed."
   (prog1
       (heap--count heap)
-    (setf (heap--vector heap) (make-vector (heap--initial-size heap) nil)
+    (setf (heap--vector heap)
+          (make-vector (heap--allocated-size heap) nil)
           (heap--count heap) 0)))
 
 
