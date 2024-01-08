@@ -27,11 +27,11 @@
 ;;; Commentary:
 ;;
 ;; A heap is a form of efficient self-sorting tree.  In particular, the root
-;; node is guaranteed to be the highest-ranked entry in the tree.  (The
-;; comparison function used for ranking the data can, of course, be freely
-;; defined).  Therefore repeatedly removing the root node will return the data
-;; in order of increasing rank.  They are often used as priority queues, for
-;; scheduling tasks in order of importance.
+;; node is guaranteed to be the highest-ranked entry in the tree.  (The sorting
+;; function used for ranking the data can, of course, be freely defined).
+;; Therefore repeatedly removing the root node will return the data in order of
+;; increasing rank.  They are often used as priority queues, for scheduling
+;; tasks in order of importance.
 ;;
 ;; This package implements ternary heaps, since they are about 12% more
 ;; efficient than binary heaps for heaps containing more than about 10
@@ -74,13 +74,13 @@
                     (:constructor nil)
                     (:copier nil)
                     (:constructor heap--new
-                                  (comparison-function
+                                  (sorting-function
                                    &optional
                                    (allocated-size 10)
                                    (resize-factor 2)))
                     :named)
   (vector (make-vector allocated-size nil))
-  comparison-function
+  sorting-function
   (count 0)
   (allocated-size 10)
   (resize-factor 2))
@@ -98,9 +98,9 @@ their respective elements in V."
   "Return the index of the first of the 3 children of element I in HEAP, if any.
 
 The children, should they exist, are ordered using the HEAP
-comparison function."
+sorting function."
   (let ((v (heap--vector heap))
-        (f (heap--comparison-function heap))
+        (f (heap--sorting-function heap))
         (c (heap--count heap))
         (j (* 3 i)))
     (let ((first (1+ j)))
@@ -125,14 +125,14 @@ comparison function."
   "Sift instance with index I in HEAP upwards.
 
 Proceed until it reaches its order in the HEAP as determined by
-the HEAP comparison function, or its top."
+the HEAP sorting function, or its top."
   (let* ((v (heap--vector heap))
-         (f (heap--comparison-function heap))
+         (f (heap--sorting-function heap))
          (i i)
          (j)
          (e (aref v i)))
     (while (and (> i 0)
-		(funcall f e (aref v (setq j (/ (1- i) 3)))))
+                (funcall f e (aref v (setq j (/ (1- i) 3)))))
       (heap--vswap v i j)
       (setq i j))))
 
@@ -141,12 +141,12 @@ the HEAP comparison function, or its top."
   "Sift instance with index I in the HEAP downwards.
 
 Proceed until it reaches its order in the HEAP as determined by
-the HEAP comparison function, or its bottom."
+the HEAP sorting function, or its bottom."
   (let* ((v (heap--vector heap))
-	 (f (heap--comparison-function heap))
-	 (i i)
+         (f (heap--sorting-function heap))
+         (i i)
          (j (heap--child heap i))
-	 (e (aref v i)))
+         (e (aref v i)))
     (while (and j (funcall f (aref v j) e))
       (heap--vswap v i j)
       (setq i j
@@ -169,9 +169,9 @@ the HEAP comparison function, or its bottom."
 
 ;;;###autoload
 (defalias 'heap-new #'heap--new
-  "Create an empty heap with comparison function COMPARISON-FUNCTION.
+  "Create an empty heap with sorting function SORTING-FUNCTION.
 
-COMPARISON-FUNCTION is called with two elements of the heap, and
+SORTING-FUNCTION is called with two elements of the heap, and
 should return non-nil if the first element should sort before the
 second, nil otherwise.
 
@@ -183,7 +183,7 @@ space, defaulting to 2.")
 
 (defun heap-copy (heap)
   "Return a copy of heap HEAP."
-  (let ((newheap (heap--new (heap--comparison-function heap)
+  (let ((newheap (heap--new (heap--sorting-function heap)
                             (heap--allocated-size heap)
                             (heap--resize-factor heap))))
     (setf (heap--vector newheap) (vconcat (heap--vector heap))
@@ -201,9 +201,9 @@ space, defaulting to 2.")
   (heap--count heap))
 
 
-(defun heap-comparison-function (heap)
-  "Return the comparison function of heap HEAP."
-  (heap--comparison-function heap))
+(defun heap-sorting-function (heap)
+  "Return the sorting function of heap HEAP."
+  (heap--sorting-function heap))
 
 
 (defun heap-push (heap data)
@@ -259,17 +259,17 @@ Return t if a match is found, nil otherwise."
     (unless (not i)
       (let ((olddata (aref v i)))
         (aset v i data)
-        (if (funcall (heap--comparison-function heap) data olddata)
+        (if (funcall (heap--sorting-function heap) data olddata)
             (heap--sift-up heap i)
           (heap--sift-down heap i)))
       t)))
 
 
 ;;;###autoload
-(defun heap-create (vector comparison-function &optional resize-factor)
-  "Create a heap from vector VECTOR with comparison function COMPARISON-FUNCTION.
+(defun heap-create (vector sorting-function &optional resize-factor)
+  "Create a heap from vector VECTOR with sorting function SORTING-FUNCTION.
 
-COMPARISON-FUNCTION is called with two elements of the heap, and
+SORTING-FUNCTION is called with two elements of the heap, and
 should return non-nil if the first element should sort before the
 second, nil otherwise.
 
@@ -277,7 +277,7 @@ Optional argument RESIZE-FACTOR sets the factor by which the
 heap's size is increased if it runs out of space, defaulting to
 2."
   (let ((heap (heap--new
-               comparison-function
+               sorting-function
                (length vector)
                (or resize-factor 2))))
     (setf (heap--vector heap) (copy-sequence vector)
@@ -289,12 +289,12 @@ heap's size is increased if it runs out of space, defaulting to
 (defun heap-merge (heap &rest heaps)
   "Merge heap HEAP with remaining HEAPS.
 
-The newly merged heap takes the comparison function and
+The newly merged heap takes the sorting function and
 resize-factor of heap HEAP.
 
 Note that this operation requires O(n) time to merge n heaps."
   (let ((vv (mapcar #'heap--vector heaps)))
-    (heap-create (heap--comparison-function heap)
+    (heap-create (heap--sorting-function heap)
                  (apply #'vconcat (heap--vector heap) vv)
                  (heap--resize-factor heap))))
 
