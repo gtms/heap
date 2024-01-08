@@ -180,7 +180,6 @@ defaulting to 10.  Optional argument RESIZE-FACTOR sets the
 factor by which the heap's size is increased if it runs out of
 space, defaulting to 2.")
 
-(defalias 'hippo-pop #'hippo-delete-root)
 
 (defun hippo-copy (heap)
   "Return a copy of heap HEAP."
@@ -230,7 +229,7 @@ space, defaulting to 2.")
   (if (zerop (hippo--count heap)) nil (aref (hippo--vect heap) 0)))
 
 
-(defun hippo-delete-root (heap)
+(defun hippo-pop (heap)
   "Return the root of heap HEAP and remove it from HEAP."
   (let ((v (hippo--vect heap)))
     (unless (zerop (hippo--count heap))
@@ -320,7 +319,7 @@ operation that takes O(n) time for a heap of size n.  Calls to
 each."
    (let ((heap (hippo-copy heap)))
      (while (not (hippo-empty-p heap))
-       (iter-yield (hippo-delete-root heap))))))
+       (iter-yield (hippo-pop heap))))))
 
 
 (provide 'heap)
