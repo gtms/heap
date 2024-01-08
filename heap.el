@@ -263,6 +263,7 @@ Return t if there was a match, nil otherwise."
       t)))
 
 
+;;;###autoload
 (defun hippo-create (vector comparison-function &optional resize-factor)
   "Create a heap from vector VECTOR with comparison function COMPARISON-FUNCTION.
 
