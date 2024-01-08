@@ -61,7 +61,7 @@
 
 (eval-when-compile (require 'cl-lib))
 
-(defmacro hippo--when-generators (then)
+(defmacro heap--when-generators (then)
   "Evaluate THEN if `generator' library is available."
   (declare (debug t))
   (when (require 'generator nil 'noerror) then))
@@ -70,15 +70,15 @@
 ;;; ================================================================
 ;;;        Internal functions for use in the heap package
 
-(cl-defstruct (hippo (:conc-name hippo--)
-                     (:constructor nil)
-                     (:copier nil)
-                     (:constructor hippo--new
-                                   (comparison-function
-                                    &optional
-                                    (initial-size 10)
-                                    (resize-factor 2)))
-                     :named)
+(cl-defstruct (heap (:conc-name heap--)
+                    (:constructor nil)
+                    (:copier nil)
+                    (:constructor heap--new
+                                  (comparison-function
+                                   &optional
+                                   (initial-size 10)
+                                   (resize-factor 2)))
+                    :named)
   (vector (make-vector initial-size nil))
   comparison-function
   (count 0)
@@ -86,7 +86,7 @@
   (resize-factor 2))
 
 
-(defsubst hippo--isort (v i j f)
+(defsubst heap--isort (v i j f)
   "Return first index from I or J in vector V.
 
 Indexes I and J are ordered by calling sorting function F on
@@ -94,72 +94,72 @@ their respective elements in V."
   (if (funcall f (aref v i) (aref v j)) i j))
 
 
-(defun hippo--child (heap i)
+(defun heap--child (heap i)
   "Return the index of the first of the 3 children of element I in HEAP, if any.
 
 The children, should they exist, are ordered using the HEAP
 comparison function."
-  (let ((v (hippo--vector heap))
-        (f (hippo--comparison-function heap))
-        (c (hippo--count heap))
+  (let ((v (heap--vector heap))
+        (f (heap--comparison-function heap))
+        (c (heap--count heap))
         (j (* 3 i)))
     (let ((first (1+ j)))
       (unless (>= first c)
         (let ((second (+ 2 j)))
           (if (>= second c)
               first
-            (let ((best (hippo--isort v first second f))
+            (let ((best (heap--isort v first second f))
                   (third (+ 3 j)))
               (if (>= third c)
                   best
-                (hippo--isort v best third f)))))))))
+                (heap--isort v best third f)))))))))
 
 
-(defsubst hippo--vswap (v i j)
+(defsubst heap--vswap (v i j)
   "Swap elements I and J in vector V."
   (cl-psetf (aref v i) (aref v j)
             (aref v j) (aref v i)))
 
 
-(defun hippo--sift-up (heap n)
+(defun heap--sift-up (heap n)
   "Sift instance with index N in HEAP upwards.
 
 Proceed until it reaches its order in the HEAP as determined by
 the HEAP comparison function, or its top."
-  (let* ((v (hippo--vector heap))
-         (f (hippo--comparison-function heap))
+  (let* ((v (heap--vector heap))
+         (f (heap--comparison-function heap))
          (i n)
          (j)
          (e (aref v i)))
     (while (and (> i 0)
 		(funcall f e (aref v (setq j (/ (1- i) 3)))))
-      (hippo--vswap v i j)
+      (heap--vswap v i j)
       (setq i j))))
 
 
-(defun hippo--sift-down (heap n)
+(defun heap--sift-down (heap n)
   "Sift instance with index N in the HEAP downwards.
 
 Proceed until it reaches its order in the HEAP as determined by
 the HEAP comparison function, or its bottom."
-  (let* ((v (hippo--vector heap))
-	 (f (hippo--comparison-function heap))
+  (let* ((v (heap--vector heap))
+	 (f (heap--comparison-function heap))
 	 (i n)
-         (j (hippo--child heap i))
+         (j (heap--child heap i))
 	 (e (aref v i)))
     (while (and j (funcall f (aref v j) e))
-      (hippo--vswap v i j)
+      (heap--vswap v i j)
       (setq i j
-            j (hippo--child heap i)))))
+            j (heap--child heap i)))))
 
 
-(defun hippo--heapify (heap)
+(defun heap--heapify (heap)
   "Heapify heap HEAP."
-  (let* ((c (hippo--count heap))
+  (let* ((c (heap--count heap))
          (i (ceiling
              (1- (expt 3 (ceiling (1- (log (1+ (* 2 c)) 3))))) 2)))
     (cl-loop for i downfrom i to 0 do
-             (hippo--sift-down heap i))
+             (heap--sift-down heap i))
     heap))
 
 
@@ -168,7 +168,7 @@ the HEAP comparison function, or its bottom."
 ;;;          The public functions which operate on heaps.
 
 ;;;###autoload
-(defalias 'hippo-new #'hippo--new
+(defalias 'heap-new #'heap--new
   "Create an empty heap with comparison function COMPARISON-FUNCTION.
 
 COMPARISON-FUNCTION is called with two elements of the heap, and
@@ -181,69 +181,70 @@ factor by which the heap's size is increased if it runs out of
 space, defaulting to 2.")
 
 
-(defun hippo-copy (heap)
+(defun heap-copy (heap)
   "Return a copy of heap HEAP."
-  (let ((newheap (hippo--new (hippo--comparison-function heap)
-                             (hippo--initial-size heap)
-                             (hippo--resize-factor heap))))
-    (setf (hippo--vector newheap) (vconcat (hippo--vector heap))
-          (hippo--count newheap) (hippo--count heap))
+  (let ((newheap (heap--new (heap--comparison-function heap)
+                            (heap--initial-size heap)
+                            (heap--resize-factor heap))))
+    (setf (heap--vector newheap) (vconcat (heap--vector heap))
+          (heap--count newheap) (heap--count heap))
     newheap))
 
 
-(defun hippo-empty-p (heap)
+(defun heap-empty-p (heap)
   "Return t if heap HEAP is empty, nil otherwise."
-  (zerop (hippo--count heap)))
+  (zerop (heap--count heap)))
 
 
-(defun hippo-count (heap)
+(defun heap-count (heap)
   "Return the number of entries in heap HEAP."
-  (hippo--count heap))
+  (heap--count heap))
 
 
-(defun hippo-comparison-function (heap)
+(defun heap-comparison-function (heap)
   "Return the comparison function of heap HEAP."
-  (hippo--comparison-function heap))
+  (heap--comparison-function heap))
 
 
-(defun hippo-push (heap data)
+(defun heap-push (heap data)
   "Add DATA to heap HEAP, and return DATA."
-  (let ((count (hippo--count heap))
-	(size (hippo--initial-size heap))
-	(vect (hippo--vector heap)))
+  (let ((count (heap--count heap))
+        (size (heap--initial-size heap))
+        (v (heap--vector heap)))
     (if (< count size)
-	(aset vect count data)
-      (setf (hippo--vector heap)
-            (vconcat (hippo--vector heap) (vector data)
+        (aset v count data)
+      (setf (heap--vector heap)
+            (vconcat (heap--vector heap) (vector data)
                      (make-vector
-                      (1- (* size (1- (hippo--resize-factor heap))))
+                      (1- (* size (1- (heap--resize-factor heap))))
                       nil))
-            (hippo--initial-size heap) (* size (hippo--resize-factor heap))))
-    (let ((count (setf (hippo--count heap) (1+ (hippo--count heap)))))
-      (hippo--sift-up heap (1- count))))
+            (heap--initial-size heap) (* size (heap--resize-factor heap))))
+    (let ((count (setf (heap--count heap) (1+ (heap--count heap)))))
+      (heap--sift-up heap (1- count))))
   data)
 
 
-(defun hippo-root (heap)
+(defun heap-root (heap)
   "Return the root of heap HEAP, without removing it."
-  (if (zerop (hippo--count heap)) nil (aref (hippo--vector heap) 0)))
+  (if (zerop (heap--count heap)) nil (aref (heap--vector heap) 0)))
 
 
-(defun hippo-pop (heap)
-  "Return the root of heap HEAP and remove it from HEAP."
-  (unless (zerop (hippo--count heap))
-    (let* ((v (hippo--vector heap))
+(defun heap-pop (heap)
+  "Return the root of heap HEAP and remove it from the heap."
+  (unless (zerop (heap--count heap))
+    (let* ((v (heap--vector heap))
            (root (aref v 0))
-           (count (cl-decf (hippo--count heap))))
+           (count (cl-decf (heap--count heap))))
       (if (zerop count)
-          (setf (hippo--vector heap) (make-vector (hippo--initial-size heap) nil))
+          (setf (heap--vector heap)
+                (make-vector (heap--initial-size heap) nil))
         (aset v 0 (aref v count))
         (aset v count nil)
-        (hippo--sift-down heap 0))
+        (heap--sift-down heap 0))
       root)))
 
 
-(defun hippo-modify (heap match-function data)
+(defun heap-modify (heap match-function data)
   "Replace the first element matched by MATCH-FUNCTION in heap HEAP with DATA.
 
 The function MATCH-FUNCTION is a predicate called with an element
@@ -251,20 +252,20 @@ of HEAP as its single argument, and returns non-nil if that
 element should be modified, nil otherwise.  Only the first
 matched occurrence is modified.
 
-Return t if there was a match, nil otherwise."
-  (let* ((v (hippo--vector heap))
+Return t if a match is found, nil otherwise."
+  (let* ((v (heap--vector heap))
          (i (seq-position v (seq-find match-function v))))
     (unless (not i)
       (let ((olddata (aref v i)))
         (aset v i data)
-        (if (funcall (hippo--comparison-function heap) data olddata)
-            (hippo--sift-up heap i)
-          (hippo--sift-down heap i)))
+        (if (funcall (heap--comparison-function heap) data olddata)
+            (heap--sift-up heap i)
+          (heap--sift-down heap i)))
       t)))
 
 
 ;;;###autoload
-(defun hippo-create (vector comparison-function &optional resize-factor)
+(defun heap-create (vector comparison-function &optional resize-factor)
   "Create a heap from vector VECTOR with comparison function COMPARISON-FUNCTION.
 
 COMPARISON-FUNCTION is called with two elements of the heap, and
@@ -274,41 +275,41 @@ second, nil otherwise.
 Optional argument RESIZE-FACTOR sets the factor by which the
 heap's size is increased if it runs out of space, defaulting to
 2."
-  (let ((heap (hippo--new
+  (let ((heap (heap--new
                comparison-function
                (length vector)
                (or resize-factor 2))))
-    (setf (hippo--vector heap) (copy-sequence vector)
-          (hippo--count heap) (length vector))
-    (hippo--heapify heap)
+    (setf (heap--vector heap) (copy-sequence vector)
+          (heap--count heap) (length vector))
+    (heap--heapify heap)
     heap))
 
 
-(defun hippo-merge (heap &rest heaps)
+(defun heap-merge (heap &rest heaps)
   "Merge heap HEAP with remaining HEAPS.
 
 The newly merged heap takes the comparison function and
 resize-factor of heap HEAP.
 
 Note that this operation requires O(n) time to merge n heaps."
-  (let ((vv (mapcar #'hippo--vector heaps)))
-    (hippo-create (hippo--comparison-function heap)
-                (apply #'vconcat (hippo--vector heap) vv)
-                (hippo--resize-factor heap))))
+  (let ((vv (mapcar #'heap--vector heaps)))
+    (heap-create (heap--comparison-function heap)
+                 (apply #'vconcat (heap--vector heap) vv)
+                 (heap--resize-factor heap))))
 
 
-(defun hippo-clear (heap)
+(defun heap-clear (heap)
   "Remove all entries from heap HEAP.
 
 Return the number of entries removed."
   (prog1
-      (hippo--count heap)
-    (setf (hippo--vector heap) (make-vector (hippo--initial-size heap) nil)
-          (hippo--count heap) 0)))
+      (heap--count heap)
+    (setf (heap--vector heap) (make-vector (heap--initial-size heap) nil)
+          (heap--count heap) 0)))
 
 
-(hippo--when-generators
- (iter-defun hippo-iter (heap)
+(heap--when-generators
+ (iter-defun heap-iter (heap)
    "Return a heap iterator object.
 
 Calling `iter-next' on this object will retrieve the next element
@@ -318,9 +319,9 @@ Note that constructing a heap iterator is an inefficient
 operation that takes O(n) time for a heap of size n.  Calls to
 `iter-next' are comparatively efficient, taking O(log n) time
 each."
-   (let ((heap (hippo-copy heap)))
-     (while (not (hippo-empty-p heap))
-       (iter-yield (hippo-pop heap))))))
+   (let ((heap (heap-copy heap)))
+     (while (not (heap-empty-p heap))
+       (iter-yield (heap-pop heap))))))
 
 
 (provide 'heap)
