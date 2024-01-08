@@ -87,7 +87,7 @@
 
 
 (defsubst heap--isort (v i j f)
-  "Return first index from I or J in vector V.
+  "Return the first from index I or J in vector V.
 
 Indexes I and J are ordered by calling sorting function F on
 their respective elements in V."
