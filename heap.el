@@ -155,9 +155,9 @@ the heap's sorting function, or its bottom."
 (defun heap--heapify (heap)
   "Heapify heap HEAP."
   (let* ((c (heap--count heap))
-         (i (ceiling
+         (s (ceiling
              (1- (expt 3 (ceiling (1- (log (1+ (* 2 c)) 3))))) 2)))
-    (cl-loop for i downfrom i to 0 do
+    (cl-loop for i downfrom s to 0 do
              (heap--sift-down heap i))
     heap))
 
