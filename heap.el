@@ -103,21 +103,16 @@ their respective elements in V."
 (defun heap--maybe-child (heap i)
   "Return the index of the first child of element I in heap HEAP, if any.
 
-Comparisons between each of the three children, should they
-exist, are made using the heap sorting function."
+Comparisons are made using the heap sorting function."
   (let ((v (heap--vector heap))
         (f (heap--sorting-function heap))
         (c (heap--count heap))
-        (left (1+ (* 3 i))))
+        (left (1+ (* 2 i))))
     (unless (>= left c)
-      (let ((center (1+ left)))
-        (if (>= center c)
+      (let ((right (1+ left)))
+        (if (>= right c)
             left
-          (let ((best (heap--isort v left center f))
-                (right (1+ center)))
-            (if (>= right c)
-                best
-              (heap--isort v best right f))))))))
+          (heap--isort v left right f))))))
 
 
 (defsubst heap--vswap (v i j)
