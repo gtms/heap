@@ -193,20 +193,22 @@ space, defaulting to 2.")
 
 (defun heap-push (heap data)
   "Add DATA to heap HEAP, and return DATA."
-  (let ((count (heap--count heap))
-        (size (heap--allocated-size heap))
+  (let ((c (heap--count heap))
+        (s (heap--allocated-size heap))
         (v (heap--vector heap)))
-    (if (< count size)
-        (aset v count data)
-      (setf (heap--vector heap)
-            (vconcat (heap--vector heap) (vector data)
-                     (make-vector
-                      (1- (* size (1- (heap--resize-factor heap))))
-                      nil))
-            (heap--allocated-size heap)
-            (* size (heap--resize-factor heap))))
-    (let ((count (setf (heap--count heap) (1+ (heap--count heap)))))
-      (heap--sift-up heap (1- count))))
+    (if (< c s)
+        (aset v c data)
+      (setf
+       (heap--vector heap)
+       (vconcat (heap--vector heap)
+                (vector data)
+                (make-vector
+                 (1- (* s (1- (heap--resize-factor heap))))
+                 nil))
+       (heap--allocated-size heap)
+       (* s (heap--resize-factor heap))))
+    (let ((c (setf (heap--count heap) (1+ (heap--count heap)))))
+      (heap--sift-up heap (1- c))))
   data)
 
 
