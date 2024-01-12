@@ -162,7 +162,7 @@ space, defaulting to 2.")
   (let ((newheap (heap--new (heap--sorting-function heap)
                             (heap--allocated-size heap)
                             (heap--resize-factor heap))))
-    (setf (heap--vector newheap) (vconcat (heap--vector heap))
+    (setf (heap--vector newheap) (copy-sequence (heap--vector heap))
           (heap--count newheap) (heap--count heap))
     newheap))
 
