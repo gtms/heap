@@ -86,6 +86,12 @@
   (resize-factor 2))
 
 
+
+(defsubst heap--parent-index (i)
+  "Return the index of the parent of element at index I."
+  (floor (1- i) 2))
+
+
 (defsubst heap--isort (v i j f)
   "Return the first from index I or J in vector V.
 
