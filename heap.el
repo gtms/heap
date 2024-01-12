@@ -198,7 +198,7 @@ space, defaulting to 2.")
                  nil))
        (heap--allocated-size heap)
        (* s (heap--resize-factor heap))))
-    (let ((c (setf (heap--count heap) (1+ (heap--count heap)))))
+    (let ((c (cl-incf (heap--count heap))))
       (heap--sift-up heap (1- c))))
   data)
 
