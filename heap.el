@@ -290,8 +290,8 @@ resize-factor of heap HEAP.
 Note that this operation requires O(n) time to merge n heaps."
   (let ((vv (mapcar #'heap--vector heaps)))
     (heap-from (heap--sorting-function heap)
-                 (apply #'vconcat (heap--vector heap) vv)
-                 (heap--resize-factor heap))))
+               (apply #'vconcat (heap--vector heap) vv)
+               (heap--resize-factor heap))))
 
 
 (defun heap-clear (heap)
