@@ -205,7 +205,8 @@ space, defaulting to 2.")
 
 (defun heap-root (heap)
   "Return the root of heap HEAP, without removing it."
-  (if (zerop (heap--count heap)) nil (aref (heap--vector heap) 0)))
+  (unless (heap-empty-p heap)
+    (aref (heap--vector heap) 0)))
 
 
 (defun heap-pop (heap)
