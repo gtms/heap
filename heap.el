@@ -125,15 +125,13 @@ Comparisons are made using the heap sorting function."
 
 Proceed until it reaches its order in the heap as determined by
 the heap's sorting function, or its top."
-  (let* ((v (heap--vector heap))
-         (f (heap--sorting-function heap))
-         (i i)
-         (j)
-         (e (aref v i)))
-    (while (and (> i 0)
-                (funcall f e (aref v (setq j (/ (1- i) 3)))))
-      (heap--vswap v i j)
-      (setq i j))))
+  (let ((v (heap--vector heap))
+        (f (heap--sorting-function heap)))
+    (cl-loop with e = (aref v i)
+             for idx = i then parent-idx
+             for parent-idx = (heap--parent-index idx)
+             while (and (> idx 0) (funcall f e (aref v parent-idx)))
+             do (heap--vswap v idx parent-idx))))
 
 
 (defun heap--sift-down (heap i)
