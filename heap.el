@@ -218,18 +218,18 @@ space, defaulting to 2.")
 
 
 (defun heap-pop (heap)
-  "Return the root of heap HEAP and remove it from the heap."
+  "Return the root of heap HEAP, and remove it from the heap."
   (unless (zerop (heap--count heap))
     (let* ((v (heap--vector heap))
-           (root (aref v 0))
-           (count (cl-decf (heap--count heap))))
-      (if (zerop count)
+           (r (aref v 0))
+           (c (cl-decf (heap--count heap))))
+      (if (zerop c)
           (setf (heap--vector heap)
                 (make-vector (heap--allocated-size heap) nil))
-        (aset v 0 (aref v count))
-        (aset v count nil)
+        (aset v 0 (aref v c))
+        (aset v c nil)
         (heap--sift-down heap 0))
-      root)))
+      r)))
 
 
 (defun heap-modify (heap match-function data)
