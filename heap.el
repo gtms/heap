@@ -100,7 +100,7 @@ their respective elements in V."
   (if (funcall f (aref v i) (aref v j)) i j))
 
 
-(defun heap--first-child (heap i)
+(defun heap--maybe-child (heap i)
   "Return the index of the first child of element I in heap HEAP, if any.
 
 Comparisons between each of the three children, should they
