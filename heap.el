@@ -117,8 +117,7 @@ Comparisons are made using the heap sorting function."
 
 (defsubst heap--vswap (v i j)
   "Swap elements I and J in vector V."
-  (cl-psetf (aref v i) (aref v j)
-            (aref v j) (aref v i)))
+  (cl-rotatef (aref v i) (aref v j)))
 
 
 (defun heap--sift-up (heap i)
