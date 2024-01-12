@@ -139,25 +139,13 @@ the heap's sorting function, or its top."
 
 Proceed until it reaches its order in the heap as determined by
 the heap's sorting function, or its bottom."
-  (let* ((v (heap--vector heap))
-         (f (heap--sorting-function heap))
-         (i i)
-         (j (heap--first-child heap i))
-         (e (aref v i)))
-    (while (and j (funcall f (aref v j) e))
-      (heap--vswap v i j)
-      (setq i j
-            j (heap--first-child heap i)))))
-
-
-(defun heap--heapify (heap)
-  "Heapify heap HEAP."
-  (let* ((c (heap--count heap))
-         (s (ceiling
-             (1- (expt 3 (ceiling (1- (log (1+ (* 2 c)) 3))))) 2)))
-    (cl-loop for i downfrom s to 0 do
-             (heap--sift-down heap i))
-    heap))
+  (let ((v (heap--vector heap))
+        (f (heap--sorting-function heap)))
+    (cl-loop with e = (aref v i)
+             for idx = i then child-idx
+             for child-idx = (heap--maybe-child heap idx)
+             while (and child-idx (funcall f (aref v child-idx) e))
+             do (heap--vswap v idx child-idx))))
 
 
 
