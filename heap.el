@@ -253,8 +253,8 @@ Return t if a match is found, nil otherwise."
 
 
 ;;;###autoload
-(defun heap-from (vector sorting-function &optional resize-factor)
-  "Create a heap from vector VECTOR with sorting function SORTING-FUNCTION.
+(defun heap-from (sequence sorting-function &optional resize-factor)
+  "Create a heap from sequence SEQUENCE with sorting function SORTING-FUNCTION.
 
 SORTING-FUNCTION is called with two elements of the heap, and
 should return non-nil if the first element should sort before the
@@ -263,13 +263,10 @@ second, nil otherwise.
 Optional argument RESIZE-FACTOR sets the factor by which the
 heap's size is increased if it runs out of space, defaulting to
 2."
-  (let ((heap (heap--new
-               sorting-function
-               (length vector)
-               (or resize-factor 2))))
-    (setf (heap--vector heap) (copy-sequence vector)
-          (heap--count heap) (length vector))
-    (heap--heapify heap)
+  (let ((heap (heap--new sorting-function
+                         (length sequence)
+                         (or resize-factor 2))))
+    (mapc (apply-partially #'heap-push heap) (append sequence nil))
     heap))
 
 
