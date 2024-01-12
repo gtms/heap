@@ -95,15 +95,15 @@ their respective elements in V."
   "Return the index of the first child of element I in heap HEAP, if any.
 
 Comparisons are made using the heap sorting function."
-  (let ((v (heap--vector heap))
-        (f (heap--sorting-function heap))
-        (c (heap--count heap))
+  (let ((c (heap--count heap))
         (left (1+ (* 2 i))))
     (unless (>= left c)
       (let ((right (1+ left)))
         (if (>= right c)
             left
-          (heap--isort v left right f))))))
+          (let ((v (heap--vector heap))
+                (f (heap--sorting-function heap)))
+            (heap--isort v left right f)))))))
 
 
 (defsubst heap--vswap (v i j)
