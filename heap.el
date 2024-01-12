@@ -268,7 +268,7 @@ SORTING-FUNCTION is called with two elements of the sequence, and
 should return non-nil if the first element should sort before the
 second, nil otherwise."
   (let ((heap (heap-from sequence sorting-function)))
-    (cl-loop repeat (heap-count heap) collect (heap-pop heap))))
+    (cl-loop while (not (heap-empty-p heap)) collect (heap-pop heap))))
 
 
 (defun heap-merge (heap &rest heaps)
