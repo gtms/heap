@@ -87,7 +87,7 @@
   "Return the first from index I or J in vector V.
 
 Indexes I and J are ordered by calling sorting function F on
-their respective elements in V."
+their respective elements in vector V."
   (if (funcall f (aref v i) (aref v j)) i j))
 
 
