@@ -144,7 +144,7 @@ the heap's sorting function, or its bottom."
 ;;;          The public functions which operate on heaps.
 
 ;;;###autoload
-(defalias 'heap-new #'heap--new
+(defun heap-new (sorting-function &optional allocated-size resize-factor)
   "Create an empty heap with sorting function SORTING-FUNCTION.
 
 SORTING-FUNCTION is called with two elements of the heap, and
@@ -154,7 +154,10 @@ second, nil otherwise.
 Optional argument ALLOCATED-SIZE sets the initial size of the
 heap, defaulting to 10.  Optional argument RESIZE-FACTOR sets the
 factor by which the heap's size is increased if it runs out of
-space, defaulting to 2.")
+space, defaulting to 2."
+  (heap--new sorting-function
+             allocated-size
+             resize-factor))
 
 
 (defun heap-copy (heap)
