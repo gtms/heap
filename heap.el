@@ -50,8 +50,6 @@
 
 ;;; Code:
 
-(eval-when-compile (require 'cl-lib))
-
 (defmacro heap--when-generators (then)
   "Evaluate THEN if `generator' library is available."
   (declare (debug t))
@@ -155,9 +153,11 @@ Optional argument ALLOCATED-SIZE sets the initial size of the
 heap, defaulting to 10.  Optional argument RESIZE-FACTOR sets the
 factor by which the heap's size is increased if it runs out of
 space, defaulting to 2."
-  (heap--new sorting-function
-             allocated-size
-             resize-factor))
+  (let ((allocated-size (or allocated-size 10))
+        (resize-factor (or resize-factor 2)))
+    (heap--new sorting-function
+               allocated-size
+               resize-factor)))
 
 
 (defun heap-copy (heap)
